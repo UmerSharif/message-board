@@ -1,7 +1,8 @@
 <template>
   <div class="home">
 <!-- form -->
-<form @submit.prevent = "addMessage">
+<button @click="ToggleForm = !ToggleForm" type="button" class="btn btn-outline-warning mt-4">Toggle Message Form</button>
+<form v-if="ToggleForm" @submit.prevent = "addMessage" class="mt-3">
   <div class="form-group">
     <label for="username">UserName</label>
     <input type="text" class="form-control" id="username" required v-model="message.username">
@@ -26,7 +27,7 @@
 
 <hr />
 
-    <div class="list-unstyled"  v-for="message in messages" :key="message._id">
+    <div class="list-unstyled"  v-for="message in  OrderedMessages" :key="message._id">
       <li class="media">
         <img :src="message.imageURL" class="mr-3" :alt="message.subject">
         <div class="media-body">
@@ -37,8 +38,8 @@
           <small>{{message.created}}</small>
         </div>
       </li>
+      <hr/>
     </div>
-    <hr/>
   </div>
 </template>
 
@@ -48,6 +49,7 @@ export default {
   name: "home",
   data(){
     return {
+      ToggleForm : false,
       messages : [],
       message: {
         username : 'Anonymous',
@@ -65,9 +67,31 @@ export default {
       });
   },
 
+  computed: {
+      OrderedMessages(){
+        return this.messages.slice().reverse()
+      }
+  },
+
   methods: {
     addMessage(){
-
+      console.log(this.message)
+    fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify(this.message),
+      headers: {
+        'content-type': 'application/json'
+      }
+    }).then(response => response.json()).then(result => {
+      if(result.details){
+        //if error
+        const error = result.details.map(detail => detail.message).join('. ')
+        console.log(error)
+      }else {
+this.messages.push(result) 
+      }
+      
+    })
     }
   }
 };
@@ -86,4 +110,5 @@ img {
   max-width: 300px;
   max-height: auto;
 }
+
 </style>
