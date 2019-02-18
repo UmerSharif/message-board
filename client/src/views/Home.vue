@@ -92,7 +92,9 @@ export default {
 
   computed: {
     OrderedMessages() {
+      if(this.messages == true){
       return this.messages.slice().reverse();
+      } else return this.messages
     }
   },
 
