@@ -92,9 +92,9 @@ export default {
 
   computed: {
     OrderedMessages() {
-      if(this.messages == true){
+      if(this.messages == true){ // check if this.messages is empty, it will throw error at slice if its empty
       return this.messages.slice().reverse();
-      } else return this.messages
+      } else return this.messages // we return this.messages without slice here 
     }
   },
 
